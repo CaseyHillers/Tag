@@ -22,8 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.util.Arrays;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static int RC_SIGN_IN = 100;
     private static String TAG = "cmps121-tag";
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-//        updateUI(currentUser);
+        updateUI(currentUser);
     }
 
     private void signIn() {
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-//                            updateUI(user);
+                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -110,6 +108,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
     }
+
+    private void updateUI(FirebaseUser user) {
+        if (user != null) {
+            Intent loggedInIntent = new Intent(this, MapActivity.class);
+                startActivity(loggedInIntent);
+                finish();
+        }
+    }
+
 
 
     @Override
