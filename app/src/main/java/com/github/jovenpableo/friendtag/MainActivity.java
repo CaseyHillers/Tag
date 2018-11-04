@@ -1,11 +1,13 @@
 package com.github.jovenpableo.friendtag;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -50,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
     }
 
     @Override
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
-                // ...
+                showErrorToast();
             }
         }
     }
@@ -100,11 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-//                            updateUI(null);
+                            showErrorToast();
                         }
-
-                        // ...
                     }
                 });
     }
@@ -117,7 +115,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void showErrorToast() {
+        Context context = getApplicationContext();
+        CharSequence text = "Try signing in again";
+        int duration = Toast.LENGTH_LONG;
 
+        Toast.makeText(context, text, duration).show();
+    }
 
     @Override
     public void onClick(View v) {
