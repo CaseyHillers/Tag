@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">FriendTag</string>
+    <string name="app_name">Tag</string>
     <string name="web_client_id">792474155527-k6j7076dgikqnmlnpgvuqf3p0fgbfpqb.apps.googleusercontent.com</string>
-    <string name="title_activity_map">Tag</string>
 </resources>
