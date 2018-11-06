@@ -9,22 +9,22 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 public class Users {
 
     private final String TABLE_NAME = "users";
+    private final String TAG = "ucsc-tag";
 
-    private FirebaseDatabase database;
+
+    private FirebaseFirestore db;
     private FirebaseUser currentFirebaseUser;
-    private DatabaseReference mDatabase;
 
     public Users() {
-        database = FirebaseDatabase.getInstance();
-        mDatabase = database.getReference(TABLE_NAME);
+        db = FirebaseFirestore.getInstance();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -45,21 +45,22 @@ public class Users {
 
     }
 
-    public void writeUser(User user) {
-        Log.d("ucsc-tag","Writing user to firebase");
-        mDatabase.child(user.uid).setValue(user.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("ucsc-tag", "Successfully wrote/updated user to firebase");
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("ucsc-tag", e.toString());
-            }
-        });
+    public void addUser(User user) {
+        db.collection(TABLE_NAME)
+                .document(user.uid)
+                .set(user.toMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
-
 
 }

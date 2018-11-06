@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
+import com.github.jovenpableo.friendtag.entity.User;
+import com.github.jovenpableo.friendtag.firebase.Users;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,7 +28,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static int RC_SIGN_IN = 100;
-    private static String TAG = "cmps121-tag";
+    private static String TAG = "ucsc-tag";
 
     GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
@@ -109,9 +111,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
+            Users users = new Users();
+            users.addUser(new User());
+
             Intent loggedInIntent = new Intent(this, MapActivity.class);
-                startActivity(loggedInIntent);
-                finish();
+            startActivity(loggedInIntent);
+            finish();
         }
     }
 
