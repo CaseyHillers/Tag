@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "792474155527-8mg0i0647v40hlhv0cdeoaq7g1l6fc05.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jovenpableo.friendtag",
+            "certificate_hash": "b9c65d0bbda2768c30ed2670266bbbb69781f068"
+          }
+        },
+        {
+          "client_id": "792474155527-jpddgpaajrhuqdceai65hcpnvqsg9bja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jovenpableo.friendtag",
+            "certificate_hash": "3288c0babe02d5029affccd7ed021553ddeb3c7b"
+          }
+        },
+        {
           "client_id": "792474155527-k6j7076dgikqnmlnpgvuqf3p0fgbfpqb.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -44,37 +60,6 @@
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:792474155527:android:98ef151f1c55cebe",
-        "android_client_info": {
-          "package_name": "com.github.jovenpableo"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "792474155527-k6j7076dgikqnmlnpgvuqf3p0fgbfpqb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDDexn-T0nzD40dVLvpxaJwtzmJTu-ifVM"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
