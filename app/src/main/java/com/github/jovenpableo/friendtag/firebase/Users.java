@@ -3,6 +3,8 @@ package com.github.jovenpableo.friendtag.firebase;
 import android.location.Location;
 
 import com.github.jovenpableo.friendtag.entity.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -12,10 +14,15 @@ public class Users {
 
     private final String TABLE_NAME = "users";
 
+    private FirebaseDatabase database;
+    private FirebaseUser currentFirebaseUser;
+    private DatabaseReference mDatabase;
+
     public Users() {
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(TABLE_NAME);
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference(TABLE_NAME);
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public ArrayList<User> getFriends() {
@@ -32,6 +39,10 @@ public class Users {
 
     public void setLocation(Location location) {
 
+    }
+
+    private void writeUser(User user) {
+        mDatabase.child(user.uid).setValue(user);
     }
 
 
