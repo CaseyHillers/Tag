@@ -1,8 +1,12 @@
 package com.github.jovenpableo.friendtag.firebase;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.github.jovenpableo.friendtag.entity.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -41,8 +45,20 @@ public class Users {
 
     }
 
-    private void writeUser(User user) {
-        mDatabase.child(user.uid).setValue(user);
+    public void writeUser(User user) {
+        Log.d("ucsc-tag","Writing user to firebase");
+        mDatabase.child(user.uid).setValue(user.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("ucsc-tag", "Successfully wrote/updated user to firebase");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("ucsc-tag", e.toString());
+            }
+        });
     }
 
 
