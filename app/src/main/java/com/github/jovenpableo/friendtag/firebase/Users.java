@@ -1,6 +1,7 @@
 package com.github.jovenpableo.friendtag.firebase;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 
 public class Users {
 
-    private final String TABLE_NAME = "users";
     private final String TAG = "ucsc-tag";
+    private final String TABLE_NAME = "users";
 
 
     private FirebaseFirestore db;
@@ -45,45 +46,30 @@ public class Users {
         return null;
     }
 
-    public Location getLocation() {
-        return user.getLocation();
-    }
-
     public void addFriend(String email) {
         // TODO: Postpone for sake of getting working demo
     }
 
+    @SuppressLint("MissingPermission")
     public Location getLocation(Activity context) {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        Log.i(TAG, "getLocation called");
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-//            return TODO;
-            Log.e(TAG, "TODO!!! haha suckers");
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(context, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location loc) {
-                            user.setLocation(loc);
-                        }
-                    });
-
-            this.write(user);
-            return user.getLocation();
-        }
+        Log.e(TAG, "TODO!!! haha suckers");
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(context, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location loc) {
-                        user.setLocation(loc);
+                        Log.i(TAG, "Location retrieved");
+                        if (loc != null) {
+                            user.setLocation(loc);
+                            user.write(db);
+                            Log.i(TAG, "Location was not nulL! :)");
+                        }
                     }
                 });
+
+        Log.i(TAG, "Got location i think");
 
         this.write(user);
         return user.getLocation();
