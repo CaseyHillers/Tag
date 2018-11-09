@@ -37,7 +37,7 @@ public class Users {
     }
 
     public Location getLocation() {
-        user.getLocation();
+        return user.getLocation();
     }
 
     public void addFriend(String email) {
@@ -52,6 +52,11 @@ public class Users {
 
     public User getUser() {
         return this.user;
+    }
+
+    public ArrayList<User> getAll() {
+        // TODO: Write firestore code that gets everyone, then converts them to user entity
+        return null;
     }
 
     public void write(User user) {
