@@ -22,33 +22,46 @@ public class Users {
 
     private FirebaseFirestore db;
     private FirebaseUser currentFirebaseUser;
+    private User user;
 
     public Users() {
         db = FirebaseFirestore.getInstance();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        user = new User();
     }
 
     public ArrayList<User> getFriends() {
-
+        // TODO: Postpone for sake of getting working demo
         return null;
     }
 
     public Location getLocation() {
-        return null;
+        return user.getLocation();
     }
 
     public void addFriend(String email) {
-
+        // TODO: Postpone for sake of getting working demo
     }
 
     public void setLocation(Location location) {
-
+        User user = new User();
+        user.setLocation(location);
+        this.write(user);
     }
 
-    public void addUser(User user) {
+    public User getUser() {
+        return this.user;
+    }
+
+    public ArrayList<User> getAll() {
+        // TODO: Write firestore code that gets everyone, then converts them to user entity
+        return null;
+    }
+
+    public void write(User user) {
         db.collection(TABLE_NAME)
-                .document(user.uid)
+                .document(user.getUid())
                 .set(user.toMap())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
