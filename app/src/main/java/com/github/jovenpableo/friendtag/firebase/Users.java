@@ -30,6 +30,7 @@ public class Users {
     }
 
     public ArrayList<User> getFriends() {
+
         return null;
     }
 
