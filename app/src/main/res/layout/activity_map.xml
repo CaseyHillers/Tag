@@ -16,14 +16,6 @@
         tools:context="com.github.jovenpableo.friendtag.MapActivity"
         />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="108dp"
-        android:layout_height="125dp"
-        android:src="@mipmap/profile_picture"
-        tools:src="@tools:sample/avatars"
-        android:onClick="profileButton"/>
-
 </FrameLayout>
 
 
