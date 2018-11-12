@@ -2,6 +2,7 @@ package com.github.jovenpableo.friendtag.entity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +32,6 @@ public class User {
     private final String TAG = "ucsc-tag";
     private final String TABLE_NAME = "users";
 
-
     public User() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -37,8 +39,45 @@ public class User {
         uid = firebaseUser.getUid();
         displayName = firebaseUser.getDisplayName();
         pictureUrl = firebaseUser.getPhotoUrl().toString();
+//        try {
+//            URL url = new URL(pictureUrl);
+//            picture = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//        } catch(IOException e) {
+//            Log.e(TAG, e.toString());
+//        }
+    }
 
+    public User(Map<String,Object> data) {
+        uid = getString(data, "uuid");
+        displayName = getString(data, "displayName");
+        Log.i(TAG, displayName);
+        pictureUrl = getString(data, "pictureUrl");
+//        NOTE: We do async tasks because android actually doesn't want this on the main thread
+//        so it will throw an error
+        //        try {
+//            URL url = new URL(pictureUrl);
+//            picture = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//        } catch(IOException e) {
+//            Log.e(TAG, e.toString());
+//        }
 
+        String lat = getString(data, "lat");
+        String lon = getString(data, "lon");
+        location = new Location("tag-firestore");
+        if (lat != null && lon != null) {
+            location.setLatitude(Double.parseDouble(lat));
+            location.setLongitude(Double.parseDouble(lon));
+        }
+    }
+
+    private String getString(Map<String, Object> data, String key) {
+        if (data.containsKey(key)) {
+            try {
+                return data.get(key).toString();
+            } catch (Exception e) {}
+        }
+
+        return null;
     }
 
     public String getUid() { return this.uid; }

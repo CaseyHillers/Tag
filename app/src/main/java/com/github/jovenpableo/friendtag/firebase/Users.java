@@ -13,12 +13,17 @@ import android.util.Log;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -31,6 +36,8 @@ public class Users {
     private FirebaseFirestore db;
     private FirebaseUser currentFirebaseUser;
     private User user;
+
+    ArrayList<User> users;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -55,7 +62,6 @@ public class Users {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         Log.i(TAG, "getLocation called");
 
-        Log.e(TAG, "TODO!!! haha suckers");
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(context, new OnSuccessListener<Location>() {
                     @Override
@@ -65,6 +71,8 @@ public class Users {
                             user.setLocation(loc);
                             user.write(db);
                             Log.i(TAG, "Location was not nulL! :)");
+                        } else {
+                            Log.e(TAG, "Could not retrieve location");
                         }
                     }
                 });
@@ -76,19 +84,28 @@ public class Users {
 
     }
 
-    public void setLocation(Location location) {
-        User user = new User();
-        user.setLocation(location);
-        this.write(user);
-    }
-
     public User getUser() {
         return this.user;
     }
 
     public ArrayList<User> getAll() {
-        // TODO: Write firestore code that gets everyone, then converts them to user entity
-        return null;
+        users = new ArrayList<>();
+
+        db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        User user = new User(document.getData());
+                        users.add(user);
+                    }
+                } else {
+                    Log.e(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+        return users;
     }
 
     public void write(User user) {
