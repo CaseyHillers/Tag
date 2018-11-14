@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class Users {
 
@@ -37,7 +38,7 @@ public class Users {
     private FirebaseUser currentFirebaseUser;
     private User user;
 
-    ArrayList<User> users;
+    public ArrayList<User> users;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -88,7 +89,7 @@ public class Users {
         return this.user;
     }
 
-    public ArrayList<User> getAll() {
+    public ArrayList<User> getAll(final Callable<Void> methodParam) {
         users = new ArrayList<>();
 
         db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -98,6 +99,12 @@ public class Users {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         User user = new User(document.getData());
                         users.add(user);
+                    }
+
+                    try {
+                        methodParam.call();
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
                     }
                 } else {
                     Log.e(TAG, "Error getting documents: ", task.getException());

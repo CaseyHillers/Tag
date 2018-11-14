@@ -2,10 +2,10 @@ package com.github.jovenpableo.friendtag;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.View;
-
+import android.util.Log;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -26,6 +27,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private GoogleMap mMap;
 
     private ArrayList<User> users;
+    private Users userHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Users userHelper = new Users();
-        users = userHelper.getAll();
         ctx = getApplicationContext();
+        this.userHelper = new Users();
+        ctx = getApplicationContext();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -68,10 +75,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        users = userHelper.getAll(new Callable<Void>() {
+            public Void call() {
+                renderUsers();
+                return null;
+            }
+        });
     }
 
-    public void profileButton(View view) {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
+    public void renderUsers() {
+        users = userHelper.users;
+        Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
+        for (User user : users) {
+            Log.i("ucsc-tag", "Adding " + user.getDisplayName() + " to the map");
+            Location location = user.getLocation();
+            Log.i("ucsc-tag", "Putting a marker at " + location.getLatitude() + ", " + location.getLongitude());
+            LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
+            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()));
+        }
     }
+
 }
