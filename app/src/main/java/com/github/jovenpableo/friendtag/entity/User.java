@@ -39,27 +39,12 @@ public class User {
         uid = firebaseUser.getUid();
         displayName = firebaseUser.getDisplayName();
         pictureUrl = firebaseUser.getPhotoUrl().toString();
-//        try {
-//            URL url = new URL(pictureUrl);
-//            picture = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//        } catch(IOException e) {
-//            Log.e(TAG, e.toString());
-//        }
     }
 
     public User(Map<String,Object> data) {
         uid = getString(data, "uuid");
         displayName = getString(data, "displayName");
-        Log.i(TAG, displayName);
         pictureUrl = getString(data, "pictureUrl");
-//        NOTE: We do async tasks because android actually doesn't want this on the main thread
-//        so it will throw an error
-        //        try {
-//            URL url = new URL(pictureUrl);
-//            picture = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//        } catch(IOException e) {
-//            Log.e(TAG, e.toString());
-//        }
 
         String lat = getString(data, "lat");
         String lon = getString(data, "lon");

@@ -97,8 +97,13 @@ public class Users {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        User user = new User(document.getData());
-                        users.add(user);
+                        User u = new User(document.getData());
+                        if (u.getUid().equals(user.getUid())) {
+                            Log.i(TAG, "Updating current user from the getAll() call");
+                            user = u;
+                        }
+
+                        users.add(u);
                     }
 
                     try {

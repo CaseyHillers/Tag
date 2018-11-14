@@ -71,26 +71,31 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                                           }
         });
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
         users = userHelper.getAll(new Callable<Void>() {
             public Void call() {
+                update();
                 renderUsers();
                 return null;
             }
         });
     }
 
+    public void update() {
+        User user = userHelper.getUser();
+
+        Location location = user.getLocation();
+        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16.0F));
+
+    }
+
     public void renderUsers() {
         users = userHelper.users;
         Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
         for (User user : users) {
-            Log.i("ucsc-tag", "Adding " + user.getDisplayName() + " to the map");
             Location location = user.getLocation();
-            Log.i("ucsc-tag", "Putting a marker at " + location.getLatitude() + ", " + location.getLongitude());
+            Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
             LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
             mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()));
         }
