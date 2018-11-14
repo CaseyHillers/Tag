@@ -123,7 +123,7 @@ public class Users {
     public void write(User user) {
         db.collection(TABLE_NAME)
                 .document(user.getUid())
-                .set(user.toMap())
+                .update(user.toMap())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
