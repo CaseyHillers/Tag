@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/textBio"
-        android:layout_width="310dp"
-        android:layout_height="71dp"
+        android:layout_width="308dp"
+        android:layout_height="199dp"
         android:layout_marginStart="37dp"
         android:layout_marginLeft="37dp"
         android:layout_marginTop="48dp"
@@ -92,6 +92,7 @@
         android:layout_marginRight="24dp"
         android:clickable="true"
         android:tint="@color/common_google_signin_btn_text_dark_default"
+        android:onClick="faButtonClick"
         app:backgroundTint="@color/colorPrimary"
         app:elevation="16dp"
         app:fabSize="normal"

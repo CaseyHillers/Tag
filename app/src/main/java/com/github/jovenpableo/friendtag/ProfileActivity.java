@@ -25,9 +25,12 @@ public class ProfileActivity extends AppCompatActivity {
     TextView bioView;
     TextView tagsView;
     TextView taggedView;
+    FloatingActionButton faButton;
 
     UserManager userManager;
     User user;
+    boolean isCurrentUser = false;
+    boolean isEditing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
         bioView = findViewById(R.id.textBio);
         tagsView = findViewById(R.id.textTagPoints);
         taggedView = findViewById(R.id.textTaggedPoints);
+        faButton = findViewById((R.id.floatingActionButton));
 
         userManager = UserManager.getInstance();
 
@@ -60,17 +64,16 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         setProfile(user);
     }
 
     private void setProfile(User user) {
         User currentUser = userManager.getCurrentUser();
         if (currentUser.equals(user)) {
+            isCurrentUser = true;
             Button actionButton = findViewById(R.id.btnAction);
-            FloatingActionButton floatingActionButton = findViewById((R.id.floatingActionButton));
             actionButton.setVisibility(View.GONE);
-            floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
+            faButton.setImageResource(R.drawable.ic_edit_white_24dp);
         }
 
         String name = user.getDisplayName();
@@ -91,5 +94,19 @@ public class ProfileActivity extends AppCompatActivity {
         taggedView.setText(taggeds);
 
         Log.i(TAG, "New name: " + nameView.getText());
+    }
+
+    public void faButtonClick(View view) {
+        if (isCurrentUser && !isEditing) {
+            faButton.setImageResource(R.drawable.ic_check_white_24dp);
+            isEditing = true;
+            //TODO: switch to EditView with content of bioView
+        } else if (isCurrentUser && isEditing) {
+            faButton.setImageResource(R.drawable.ic_edit_white_24dp);
+            isEditing = false;
+            //TODO: store to database and display in bioView
+        } else {
+
+        }
     }
 }
