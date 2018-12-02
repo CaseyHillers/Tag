@@ -68,7 +68,6 @@ public class UserManager {
 
         Log.i(TAG, "Got location i think");
 
-        this.write(user);
         return user.getLocation();
 
     }
@@ -112,10 +111,8 @@ public class UserManager {
             return false;
         }
 
-        String tagUid = user.getUid();
-
         // NOTE: Check if tag time is valid
-        Date lastTagTime = user.getTagTime(tagUid);
+        Date lastTagTime = user.getTagTime(user);
         Date currentTime = Calendar.getInstance().getTime();
 
         long difference = currentTime.getTime() - lastTagTime.getTime();
