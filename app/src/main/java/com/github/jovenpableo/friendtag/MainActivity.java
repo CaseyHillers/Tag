@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
-        UserManager userManager = UserManager.getInstance();
     }
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
