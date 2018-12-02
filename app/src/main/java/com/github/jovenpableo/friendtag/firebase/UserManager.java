@@ -59,7 +59,7 @@ public class UserManager {
                         if (loc != null) {
                             user.setLocation(loc);
                             user.write(db);
-                            Log.i(TAG, "Location was not nulL! :)");
+                            Log.i(TAG, "Writing location (" + loc.getLatitude() + ", " + loc.getLongitude() + ")");
                         } else {
                             Log.e(TAG, "Could not retrieve location");
                         }
@@ -72,8 +72,12 @@ public class UserManager {
 
     }
 
-    public User getUser() {
+    public User getCurrentUser() {
         return this.user;
+    }
+
+    public User getUser(String uid) {
+        return null;
     }
 
     public void getAll(final Callable<Void> methodParam) {

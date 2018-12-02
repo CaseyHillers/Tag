@@ -1,7 +1,5 @@
 package com.github.jovenpableo.friendtag;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
         bioView = findViewById(R.id.textBio);
 
         userManager = new UserManager();
-        user = userManager.getUser();
+        user = userManager.getCurrentUser();
 
         // NOTE: This is just here to update the location of a user
         Location location = userManager.getLocation(this);
@@ -58,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setProfile(User user) {
-        User currentUser = userManager.getUser();
+        User currentUser = userManager.getCurrentUser();
         if (currentUser.equals(user)) {
             Button actionButton = findViewById(R.id.btnAction);
             FloatingActionButton floatingActionButton = findViewById((R.id.floatingActionButton));

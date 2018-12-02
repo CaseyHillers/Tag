@@ -6,6 +6,7 @@ import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
@@ -64,6 +65,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                           @Override
                                           public boolean onMarkerClick(Marker marker) {
+                                              Toast.makeText(ctx, (String) marker.getTag(), Toast.LENGTH_SHORT).show();
                                               Intent intent = new Intent(ctx, ProfileActivity.class);
                                               startActivity(intent);
                                               return true;
@@ -72,31 +74,33 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         userManager.getAll(new Callable<Void>() {
             public Void call() {
-            update();
-            renderUsers();
-            return null;
+                update();
+                renderUsers();
+                return null;
             }
         });
     }
 
     public void update() {
-        User user = userManager.getUser();
+        User user = userManager.getCurrentUser();
 
         Location location = user.getLocation();
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16.0F));
-
     }
 
     public void renderUsers() {
         users = new ArrayList<User>(userManager.users.values());
         Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
+        int i = 0;
         for (User user : users) {
             Location location = user.getLocation();
             Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
             LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
-            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()));
+            //i is used as dummy text
+            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName())).setTag(Integer.toString(i));
+            i++;
         }
     }
 
