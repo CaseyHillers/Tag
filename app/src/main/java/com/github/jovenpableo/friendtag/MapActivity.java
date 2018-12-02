@@ -65,9 +65,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                           @Override
                                           public boolean onMarkerClick(Marker marker) {
-                                              Toast.makeText(ctx, (String) marker.getTag(), Toast.LENGTH_SHORT).show();
+                                              String uid = (String) marker.getTag();
                                               Intent intent = new Intent(ctx, ProfileActivity.class);
-                                              intent.putExtra("uid", (String)marker.getTag());
+                                              intent.putExtra("uid", uid);
                                               startActivity(intent);
                                               return true;
                                           }
