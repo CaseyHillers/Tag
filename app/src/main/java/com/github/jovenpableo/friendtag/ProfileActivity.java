@@ -1,5 +1,6 @@
 package com.github.jovenpableo.friendtag;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
@@ -16,13 +17,14 @@ import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
-
 public class ProfileActivity extends AppCompatActivity {
     private static String TAG = "ucsc-tag";
 
     ImageView avatarView;
     TextView nameView;
     TextView bioView;
+    TextView tagsView;
+    TextView taggedView;
 
     UserManager userManager;
     User user;
@@ -38,13 +40,21 @@ public class ProfileActivity extends AppCompatActivity {
         avatarView = findViewById(R.id.imageAvatar);
         nameView = findViewById(R.id.textName1);
         bioView = findViewById(R.id.textBio);
+        tagsView = findViewById(R.id.textTagPoints);
+        taggedView = findViewById(R.id.textTaggedPoints);
 
-        userManager = new UserManager();
-        user = userManager.getCurrentUser();
+        userManager = UserManager.getInstance();
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("uid") && !intent.getStringExtra("uid").equals("")) {
+            Log.i(TAG, "Setting profile to " + intent.getStringExtra("uid"));
+            user = userManager.getUser(intent.getStringExtra("uid"));
+        } else {
+            user = userManager.getCurrentUser();
+        }
 
         // NOTE: This is just here to update the location of a user
         Location location = userManager.getLocation(this);
-
     }
 
     @Override
@@ -65,6 +75,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
+        String tags = "" + user.getTagPoints();
+        String taggeds = "" + user.getTaggedPoints();
         String bio = user.getBio();
         if (bio == null || bio.equals("")) {
             bio = "Hello! My name is " + name + " and I am ready to play some tag!";
@@ -75,6 +87,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         nameView.setText(name);
         bioView.setText(bio);
+        tagsView.setText(tags);
+        taggedView.setText(taggeds);
 
         Log.i(TAG, "New name: " + nameView.getText());
     }

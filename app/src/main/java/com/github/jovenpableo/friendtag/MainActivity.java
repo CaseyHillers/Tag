@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        UserManager userManager = UserManager.getInstance();
     }
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            UserManager userManager = new UserManager();
+            UserManager userManager = UserManager.getInstance();
             userManager.write(new User());
 
             Intent loggedInIntent = new Intent(this, MapActivity.class);

@@ -39,7 +39,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mapFragment.getMapAsync(this);
 
         ctx = getApplicationContext();
-        this.userManager = new UserManager();
+        this.userManager = UserManager.getInstance();
         ctx = getApplicationContext();
         try {
             Thread.sleep(1000);
@@ -67,6 +67,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                                           public boolean onMarkerClick(Marker marker) {
                                               Toast.makeText(ctx, (String) marker.getTag(), Toast.LENGTH_SHORT).show();
                                               Intent intent = new Intent(ctx, ProfileActivity.class);
+                                              intent.putExtra("uid", (String)marker.getTag());
                                               startActivity(intent);
                                               return true;
                                           }
@@ -99,7 +100,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
             LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
             //i is used as dummy text
-            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName())).setTag(Integer.toString(i));
+            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName())).setTag(user.getUid());
             i++;
         }
     }

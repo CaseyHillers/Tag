@@ -19,8 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +26,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class UserManager {
+    private static final UserManager ourInstance = new UserManager();
+
     private final String TAG = "ucsc-tag";
     private final String TABLE_NAME = "users";
 
@@ -39,12 +39,19 @@ public class UserManager {
 
     private FusedLocationProviderClient mFusedLocationClient;
 
-    public UserManager() {
+    private UserManager() {
         db = FirebaseFirestore.getInstance();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         user = new User();
+
+        this.loadUsers();
     }
+
+    public static UserManager getInstance() {
+        return ourInstance;
+    }
+
 
     @SuppressLint("MissingPermission")
     public Location getLocation(Activity context) {
@@ -77,7 +84,30 @@ public class UserManager {
     }
 
     public User getUser(String uid) {
-        return null;
+        return users.get(uid);
+    }
+
+    private void loadUsers() {
+        users = new HashMap<String, User>();
+
+        db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        User u = new User(document.getData());
+                        if (u.getUid().equals(user.getUid())) {
+                            Log.i(TAG, "Updating current user from the getAll() call");
+                            user = u;
+                        }
+
+                        users.put(u.getUid(), u);
+                    }
+                } else {
+                    Log.e(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
     }
 
     public void getAll(final Callable<Void> methodParam) {

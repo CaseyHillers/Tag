@@ -26,7 +26,7 @@ public class FriendsActivity extends AppCompatActivity {
         listView = findViewById(R.id.list_view);
         inflater = getLayoutInflater();
 
-        userManager = new UserManager();
+        userManager = UserManager.getInstance();
 
 //        TODO: Make this use the callback functional way
 //        ArrayList<User> friends = userManager.getAll();

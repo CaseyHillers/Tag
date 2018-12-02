@@ -61,8 +61,8 @@ public class User {
             location.setLongitude(Double.parseDouble(lon));
         }
 
-//        tagPoints = getInt(data, "tagPoints");
-//        taggedPoints = getInt(data, "taggedPoints");
+        tagPoints = getInt(data, "tagPoints");
+        taggedPoints = getInt(data, "taggedPoints");
     }
 
     private String getString(Map<String, Object> data, String key) {
@@ -78,6 +78,8 @@ public class User {
 
     private int getInt(Map<String, Object> data, String key) {
         String integer = getString(data, key);
+        if (integer == null) return 0;
+
         return Integer.parseInt(integer);
     }
 
