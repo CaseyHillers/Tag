@@ -15,8 +15,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +30,11 @@ public class User {
     // NOTE: Lon and Lat are stored as doubles.
     private Location location;
     private String pictureUrl;
+    private String tags;
+    private String tagged;
+
     private Bitmap picture;
+    private ArrayList<String> friends;
 
     private final String TAG = "ucsc-tag";
     private final String TABLE_NAME = "users";
@@ -45,7 +52,9 @@ public class User {
         uid = getString(data, "uuid");
         displayName = getString(data, "displayName");
         pictureUrl = getString(data, "pictureUrl");
-
+        friends = getList(data, "friends");
+        tags = getString(data, "tagPoints");
+        tagged = getString(data, "taggedPoints");
         String lat = getString(data, "lat");
         String lon = getString(data, "lon");
         location = new Location("tag-firestore");
@@ -65,6 +74,24 @@ public class User {
         return null;
     }
 
+    private ArrayList<String> getList(Map<String, Object> data, String key) {
+        if (data.containsKey(key)) {
+            try {
+                ArrayList<String> list = new ArrayList<String>();
+                JSONArray jsonArray = new JSONArray(data.get(key).toString());
+
+
+                for(int i = 0; i < jsonArray.length(); i++){
+                    list.add(jsonArray.getString(i));
+                }
+
+                return list;
+            } catch (Exception e) {}
+        }
+
+        return null;
+    }
+
     public String getUid() { return this.uid; }
     public void setUid(String uid) { this.uid = uid; }
     public String getDisplayName() { return this.displayName; }
@@ -75,6 +102,13 @@ public class User {
     public void setPicture(Bitmap picture) { this.picture = picture;}
     public String getPictureUrl() { return this.pictureUrl; }
     public void setPictureUrl(String pictureUrl) { this.pictureUrl = pictureUrl; }
+    public ArrayList<String> getFriends() { return this.friends; }
+    public String getTags() { return this.tags; }
+    public String getTagged() { return this.tagged; }
+
+
+
+
 
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)

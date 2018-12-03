@@ -39,6 +39,8 @@ public class Users {
     private User user;
 
     public ArrayList<User> users;
+    public ArrayList<User> friends;
+
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -50,8 +52,25 @@ public class Users {
     }
 
     public ArrayList<User> getFriends() {
-        // TODO: Postpone for sake of getting working demo
-        return null;
+        friends = new ArrayList<>();
+
+        db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        User u = new User(document.getData());
+                        for(int i = 0; i < user.getFriends().size(); i++){
+                            if(u.getUid().equals(user.getFriends().get(i))){
+                                friends.add(u);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return friends;
     }
 
     public void addFriend(String email) {

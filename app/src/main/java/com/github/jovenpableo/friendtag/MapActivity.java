@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.example.jovenpableo.friendtag.R;
@@ -46,8 +47,9 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     DownloadImage di;
 
     private static ArrayList<User> users;
-    private static Users userHelper;
-    public static Bitmap bit;
+    public static ArrayList<User> friends;
+
+    public static Users userHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 return null;
             }
         });
+
+        friends = userHelper.getFriends();
     }
 
     public void update() {
@@ -138,5 +142,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             }
         }
 
+    }
+
+
+    public void changeToFriends(View view) {
+        Intent intent = new Intent(this, FriendsActivity.class);
+        startActivity(intent);
     }
 }
