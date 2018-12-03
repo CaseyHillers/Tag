@@ -1,5 +1,6 @@
 package com.github.jovenpableo.friendtag;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -106,3 +107,4 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
 }
+

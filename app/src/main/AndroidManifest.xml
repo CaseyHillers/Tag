@@ -9,7 +9,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -50,12 +50,20 @@
         <activity
             android:name="com.github.jovenpableo.friendtag.FriendsActivity"
             android:label="Tag" />
-        <activity android:name="com.github.jovenpableo.friendtag.ProfileActivity"></activity>
+        <activity android:name="com.github.jovenpableo.friendtag.ProfileActivity" />
 
         <service
             android:name="com.github.jovenpableo.friendtag.LocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name="com.github.jovenpableo.friendtag.TransitionActivity" />
+
+        <meta-data
+            android:name="com.google.android.actions"
+        />
+
+
     </application>
 
 </manifest>

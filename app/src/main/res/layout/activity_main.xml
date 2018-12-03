@@ -9,6 +9,7 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
+        android:onClick="sign_in_button"
         android:layout_width="240dp"
         android:layout_height="49dp"
         android:layout_marginStart="72dp"
