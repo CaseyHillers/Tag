@@ -186,5 +186,4 @@ public class UserManager {
 
     public void getLocation(LocationService locationService) {
     }
-
 }

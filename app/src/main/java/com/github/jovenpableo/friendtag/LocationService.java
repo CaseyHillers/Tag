@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import com.github.jovenpableo.friendtag.firebase.UserManager;
+
 
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
@@ -25,6 +27,10 @@ public class LocationService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        getApplication().startActivity(intent);
+
+
+
         return null;
     }
 
