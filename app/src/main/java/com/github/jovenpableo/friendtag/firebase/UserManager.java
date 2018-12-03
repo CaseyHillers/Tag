@@ -6,6 +6,7 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.github.jovenpableo.friendtag.LocationService;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -181,6 +182,9 @@ public class UserManager {
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
+    }
+
+    public void getLocation(LocationService locationService) {
     }
 
 }
