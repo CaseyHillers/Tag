@@ -63,8 +63,7 @@ public class UserManager {
                         Log.i(TAG, "Location retrieved");
                         if (loc != null) {
                             getCurrentUser().setLocation(loc);
-                            // TODO: Not write
-//                            getCurrentUser().write(db);
+                            getCurrentUser().write(db);
                             Log.i(TAG, "Writing location (" + loc.getLatitude() + ", " + loc.getLongitude() + ")");
                         } else {
                             Log.e(TAG, "Could not retrieve location");

@@ -18,7 +18,7 @@ import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "ucsc-tag";
 
     ImageView avatarView;
@@ -98,6 +98,11 @@ public class ProfileActivity extends AppCompatActivity {
         Log.i(TAG, "New name: " + nameView.getText());
     }
 
+    public void onTagClick(View v) {
+        Log.i(TAG, "Tag button clicked");
+        userManager.tag(user);
+    }
+
     public void faButtonClick(View view) {
         if (isCurrentUser && !isEditing) {
             faButton.setImageResource(R.drawable.ic_check_white_24dp);
@@ -115,5 +120,10 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             //TODO: start message activity here
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
