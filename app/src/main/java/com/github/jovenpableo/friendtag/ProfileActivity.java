@@ -82,7 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
         String tags = "" + user.getTagPoints();
-        String taggeds = "" + user.getTaggedPoints();
         String bio = user.getBio();
         if (bio == null || bio.equals("")) {
             bio = "Hello! My name is " + name + " and I am ready to play some tag!";
