@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tagsView;
     TextView taggedView;
     FloatingActionButton faButton;
+    EditText bioEdit;
 
     UserManager userManager;
     User user;
@@ -45,7 +47,8 @@ public class ProfileActivity extends AppCompatActivity {
         bioView = findViewById(R.id.textBio);
         tagsView = findViewById(R.id.textTagPoints);
         taggedView = findViewById(R.id.textTaggedPoints);
-        faButton = findViewById((R.id.floatingActionButton));
+        faButton = findViewById(R.id.floatingActionButton);
+        bioEdit = findViewById(R.id.editBio);
 
         userManager = UserManager.getInstance();
 
@@ -90,6 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         nameView.setText(name);
         bioView.setText(bio);
+        bioEdit.setText(bio);
         tagsView.setText(tags);
         taggedView.setText(taggeds);
 
@@ -100,13 +104,18 @@ public class ProfileActivity extends AppCompatActivity {
         if (isCurrentUser && !isEditing) {
             faButton.setImageResource(R.drawable.ic_check_white_24dp);
             isEditing = true;
-            //TODO: switch to EditView with content of bioView
+            //switch to EditView with content of bioView
+            bioView.setVisibility(View.GONE);
+            bioEdit.setVisibility(View.VISIBLE);
         } else if (isCurrentUser) { //isEditing is true
             faButton.setImageResource(R.drawable.ic_edit_white_24dp);
             isEditing = false;
-            //TODO: store to database and display in bioView
+            bioView.setText(bioEdit.getText());
+            bioEdit.setVisibility(View.GONE);
+            bioView.setVisibility(View.VISIBLE);
+            //TODO: store in database
         } else {
-            //TODO: message activity
+            //TODO: start message activity here
         }
     }
 }
