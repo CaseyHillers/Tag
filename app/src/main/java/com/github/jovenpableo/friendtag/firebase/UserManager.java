@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ public class UserManager {
 
     private FirebaseFirestore db;
     private FirebaseUser currentFirebaseUser;
-    private User user;
 
     public Map<String, User> users;
 
@@ -43,7 +43,6 @@ public class UserManager {
         db = FirebaseFirestore.getInstance();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        user = new User();
 
         this.loadUsers();
     }
@@ -51,7 +50,6 @@ public class UserManager {
     public static UserManager getInstance() {
         return ourInstance;
     }
-
 
     @SuppressLint("MissingPermission")
     public Location getLocation(Activity context) {
@@ -64,8 +62,9 @@ public class UserManager {
                     public void onSuccess(Location loc) {
                         Log.i(TAG, "Location retrieved");
                         if (loc != null) {
-                            user.setLocation(loc);
-                            user.write(db);
+                            getCurrentUser().setLocation(loc);
+                            // TODO: Not write
+//                            getCurrentUser().write(db);
                             Log.i(TAG, "Writing location (" + loc.getLatitude() + ", " + loc.getLongitude() + ")");
                         } else {
                             Log.e(TAG, "Could not retrieve location");
@@ -75,12 +74,8 @@ public class UserManager {
 
         Log.i(TAG, "Got location i think");
 
-        return user.getLocation();
+        return getCurrentUser().getLocation();
 
-    }
-
-    public User getCurrentUser() {
-        return this.user;
     }
 
     public User getUser(String uid) {
@@ -95,14 +90,10 @@ public class UserManager {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        User u = new User(document.getData());
-                        if (u.getUid().equals(user.getUid())) {
-                            Log.i(TAG, "Updating current user from the getAll() call");
-                            user = u;
-                        }
-
-                        users.put(u.getUid(), u);
+                        User user = new User(document.getData());
+                        users.put(user.getUid(), user);
                     }
+                    Log.i(TAG, "Done downloading all users from firestore");
                 } else {
                     Log.e(TAG, "Error getting documents: ", task.getException());
                 }
@@ -118,13 +109,8 @@ public class UserManager {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        User u = new User(document.getData());
-                        if (u.getUid().equals(user.getUid())) {
-                            Log.i(TAG, "Updating current user from the getAll() call");
-                            user = u;
-                        }
-
-                        users.put(u.getUid(), u);
+                        User user = new User(document.getData());
+                        users.put(user.getUid(), user);
                     }
 
                     try {
@@ -139,28 +125,42 @@ public class UserManager {
         });
     }
 
+    public ArrayList<User> getAllUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+    public User getCurrentUser() {
+        String currentUid = currentFirebaseUser.getUid();
+        return users.get(currentUid);
+    }
+
     public boolean tag(User user) {
-        if (this.user.equals(user)) {
+        if (getCurrentUser().equals(user)) {
             Log.i(TAG, "Cannot tag ourselves");
             return false;
         }
 
         // NOTE: Check if tag time is valid
         Date lastTagTime = user.getTagTime(user);
-        Date currentTime = Calendar.getInstance().getTime();
+        if (lastTagTime != null) {
+            Date currentTime = Calendar.getInstance().getTime();
 
-        long difference = currentTime.getTime() - lastTagTime.getTime();
-        long diffMinutes = difference / (60 * 1000);
+            long difference = currentTime.getTime() - lastTagTime.getTime();
+            long diffMinutes = difference / (60 * 1000);
 
-        if (diffMinutes < 15) {
-            Log.i(TAG, "Tag is on cooldown for this user");
-            return false;
+            if (diffMinutes < 15) {
+                Log.i(TAG, "Tag is on cooldown for this user");
+                return false;
+            }
         }
 
         // TODO: Check if tag distance is valid
 
-        // TODO: Tag the user
 
+        getCurrentUser().tag(user);
+        getCurrentUser().write(db);
+
+        Log.i(TAG, "TAGGED");
 
         return true;
     }
@@ -172,7 +172,7 @@ public class UserManager {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Log.d(TAG, "UserManager: DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

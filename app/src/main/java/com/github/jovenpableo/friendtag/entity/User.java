@@ -1,22 +1,17 @@
 package com.github.jovenpableo.friendtag.entity;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +31,6 @@ public class User {
 
     private Map<String, Date> tags;
     private int tagPoints;
-    private int taggedPoints;
 
     public User() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -62,29 +56,75 @@ public class User {
         }
 
         tagPoints = getInt(data, "tagPoints");
-        taggedPoints = getInt(data, "taggedPoints");
+        Map<String, Object> dataTags = (Map<String, Object>) data.get("tags");
+        tags = getTags(dataTags);
     }
 
     private String getString(Map<String, Object> data, String key) {
+        Log.v(TAG, "Getting string for " + key);
         if (data.containsKey(key)) {
             try {
                 return data.get(key).toString();
             } catch (Exception e) {
+                Log.w(TAG, "Failed to get key: " + key);
             }
+        } else {
+            Log.w(TAG, "Failed to find key:" + key);
         }
 
         return null;
     }
 
     private int getInt(Map<String, Object> data, String key) {
+        Log.v(TAG, "Getting integer for user");
         String integer = getString(data, key);
-        if (integer == null) return 0;
+        Log.v(TAG, "Retrieved string: " + integer);
+        if (integer.equals(null)) {
+            Log.w(TAG, "Retrieved integer is null");
+            return 0;
+        }
 
+        Log.v(TAG, "Parsing the integer");
         return Integer.parseInt(integer);
     }
 
     private Map<String, Date> getTags(Map<String, Object> data) {
-        return null;
+        Map<String, Date> tags = new HashMap<String, Date>();
+
+        if (data == null) {
+            return tags;
+        }
+
+        Log.i(TAG, "Tag Data passed in " + data);
+
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String dateString = "";
+            if (entry.getValue() != null) {
+                dateString = entry.getValue().toString();
+            }
+
+            if (dateString.equals("")) {
+                dateString = "2-Dec-2018 04:21:09";
+            }
+
+            Log.i(TAG, entry.getKey() + ":" + entry.getValue());
+            Date date;
+            try {
+                date = new SimpleDateFormat("MMM dd yyyy HH:mm:ss").parse(dateString);
+            } catch (Exception e) {
+                date = new Date();
+            }
+            String uid = entry.getKey();
+            tags.put(uid, date);
+        }
+
+        return tags;
+    }
+
+    public void tag(User user) {
+        Log.i(TAG, "Tagging " + user.getUid());
+        tags.put(user.uid, new Date());
+        tagPoints++;
     }
 
     public String getUid() {
@@ -139,10 +179,6 @@ public class User {
         return this.tagPoints;
     }
 
-    public int getTaggedPoints() {
-        return this.taggedPoints;
-    }
-
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)
                 .document(getUid())
@@ -150,7 +186,7 @@ public class User {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Log.d(TAG, "DocumentSnapshot successfully written for uid: " + uid);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -168,7 +204,6 @@ public class User {
         map.put("displayName", displayName);
         map.put("pictureUrl", pictureUrl);
         map.put("tagPoints", tagPoints);
-        map.put("taggedPoints", taggedPoints);
         map.put("tags", tags);
 
         if (location != null) {

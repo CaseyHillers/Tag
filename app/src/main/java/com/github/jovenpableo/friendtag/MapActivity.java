@@ -92,7 +92,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public void renderUsers() {
-        users = new ArrayList<User>(userManager.users.values());
+        users = userManager.getAllUsers();
         Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
         int i = 0;
         for (User user : users) {
@@ -104,5 +104,4 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             i++;
         }
     }
-
 }

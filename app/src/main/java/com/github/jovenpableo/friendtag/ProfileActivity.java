@@ -17,14 +17,13 @@ import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "ucsc-tag";
 
     ImageView avatarView;
     TextView nameView;
     TextView bioView;
     TextView tagsView;
-    TextView taggedView;
 
     UserManager userManager;
     User user;
@@ -41,7 +40,6 @@ public class ProfileActivity extends AppCompatActivity {
         nameView = findViewById(R.id.textName1);
         bioView = findViewById(R.id.textBio);
         tagsView = findViewById(R.id.textTagPoints);
-        taggedView = findViewById(R.id.textTaggedPoints);
 
         userManager = UserManager.getInstance();
 
@@ -76,7 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
         String tags = "" + user.getTagPoints();
-        String taggeds = "" + user.getTaggedPoints();
         String bio = user.getBio();
         if (bio == null || bio.equals("")) {
             bio = "Hello! My name is " + name + " and I am ready to play some tag!";
@@ -88,8 +85,18 @@ public class ProfileActivity extends AppCompatActivity {
         nameView.setText(name);
         bioView.setText(bio);
         tagsView.setText(tags);
-        taggedView.setText(taggeds);
 
         Log.i(TAG, "New name: " + nameView.getText());
+    }
+
+    public void onTagClick(View v) {
+        Log.i(TAG, "Tag button clicked");
+
+        userManager.tag(user);
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
