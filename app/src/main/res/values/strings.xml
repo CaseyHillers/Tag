@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Tag</string>
+    <string name="dummy_bio">Hello! This is my hard coded bio.</string>
     <string name="web_client_id">792474155527-k6j7076dgikqnmlnpgvuqf3p0fgbfpqb.apps.googleusercontent.com</string>
 </resources>

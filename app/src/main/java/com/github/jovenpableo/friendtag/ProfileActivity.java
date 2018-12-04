@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,16 +18,20 @@ import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileActivity extends AppCompatActivity {
     private static String TAG = "ucsc-tag";
 
     ImageView avatarView;
     TextView nameView;
     TextView bioView;
     TextView tagsView;
+    FloatingActionButton faButton;
+    EditText bioEdit;
 
     UserManager userManager;
     User user;
+    boolean isCurrentUser = false;
+    boolean isEditing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         nameView = findViewById(R.id.textName1);
         bioView = findViewById(R.id.textBio);
         tagsView = findViewById(R.id.textTagPoints);
+        faButton = findViewById(R.id.floatingActionButton);
+        bioEdit = findViewById(R.id.editBio);
 
         userManager = UserManager.getInstance();
 
@@ -65,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void setProfile(User user) {
         User currentUser = userManager.getCurrentUser();
         if (currentUser.equals(user)) {
+            isCurrentUser = true;
             Button actionButton = findViewById(R.id.btnAction);
             FloatingActionButton floatingActionButton = findViewById((R.id.floatingActionButton));
             actionButton.setVisibility(View.GONE);
@@ -74,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
         String tags = "" + user.getTagPoints();
+        String taggeds = "" + user.getTaggedPoints();
         String bio = user.getBio();
         if (bio == null || bio.equals("")) {
             bio = "Hello! My name is " + name + " and I am ready to play some tag!";
@@ -84,19 +93,28 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         nameView.setText(name);
         bioView.setText(bio);
+        bioEdit.setText(bio);
         tagsView.setText(tags);
 
         Log.i(TAG, "New name: " + nameView.getText());
     }
 
-    public void onTagClick(View v) {
-        Log.i(TAG, "Tag button clicked");
-
-        userManager.tag(user);
-    }
-
-    @Override
-    public void onClick(View v) {
-
+    public void faButtonClick(View view) {
+        if (isCurrentUser && !isEditing) {
+            faButton.setImageResource(R.drawable.ic_check_white_24dp);
+            isEditing = true;
+            //switch to EditView with content of bioView
+            bioView.setVisibility(View.GONE);
+            bioEdit.setVisibility(View.VISIBLE);
+        } else if (isCurrentUser) { //isEditing is true
+            faButton.setImageResource(R.drawable.ic_edit_white_24dp);
+            isEditing = false;
+            bioView.setText(bioEdit.getText());
+            bioEdit.setVisibility(View.GONE);
+            bioView.setVisibility(View.VISIBLE);
+            //TODO: store in database
+        } else {
+            //TODO: start message activity here
+        }
     }
 }
