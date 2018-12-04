@@ -101,12 +101,12 @@ public class ProfileActivity extends AppCompatActivity {
             faButton.setImageResource(R.drawable.ic_check_white_24dp);
             isEditing = true;
             //TODO: switch to EditView with content of bioView
-        } else if (isCurrentUser && isEditing) {
+        } else if (isCurrentUser) { //isEditing is true
             faButton.setImageResource(R.drawable.ic_edit_white_24dp);
             isEditing = false;
             //TODO: store to database and display in bioView
         } else {
-
+            //TODO: message activity
         }
     }
 }
