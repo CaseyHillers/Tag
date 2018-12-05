@@ -2,23 +2,14 @@ package com.github.jovenpableo.friendtag;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.media.Image;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
-import com.github.jovenpableo.friendtag.firebase.Users;
+import com.github.jovenpableo.friendtag.firebase.UserManager;
 import com.github.jovenpableo.friendtag.utility.DownloadImage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,7 +29,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
-
     Context ctx;
     private static GoogleMap mMap;
 
@@ -46,10 +36,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     NetworkInfo networkInfo;
     DownloadImage di;
 
-    private static ArrayList<User> users;
-    public static ArrayList<User> friends;
-
-    public static Users userHelper;
+    private ArrayList<User> users;
+    private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +53,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mapFragment.getMapAsync(this);
 
         ctx = getApplicationContext();
-        this.userHelper = new Users();
+        this.userManager = UserManager.getInstance();
         ctx = getApplicationContext();
         try {
             Thread.sleep(1000);
@@ -97,19 +85,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                                           }
         });
 
-        users = userHelper.getAll(new Callable<Void>() {
+        userManager.getAll(new Callable<Void>() {
             public Void call() {
                 update();
                 renderUsers();
                 return null;
             }
         });
-
-        friends = userHelper.getFriends();
     }
 
     public void update() {
-        User user = userHelper.getUser();
+        User user = userManager.getCurrentUser();
 
         Location location = user.getLocation();
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -119,7 +105,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public void renderUsers() {
-        users = userHelper.users;
+        users = userManager.getAllUsers();
         Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
 
         for (User user : users) {
@@ -130,8 +116,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public static void renderAfter(Bitmap bitmap, String currUID){
-        users = userHelper.users;
-
         for (User user : users) {
             if(user.getUid().equals(currUID)){
                 Location location = user.getLocation();

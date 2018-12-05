@@ -3,27 +3,17 @@ package com.github.jovenpableo.friendtag;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
-import com.github.jovenpableo.friendtag.firebase.Users;
-import com.github.jovenpableo.friendtag.utility.CircleTransform;
-import com.github.jovenpableo.friendtag.utility.DownloadImage;
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.Map;
+import com.github.jovenpableo.friendtag.firebase.UserManager;
 
 public class FriendsActivity extends AppCompatActivity {
-
-    Users db;
+    UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +24,11 @@ public class FriendsActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
 
-        db = new Users();
-        ArrayList<User> resp = MapActivity.friends;
+        userManager = UserManager.getInstance();
 
+        ArrayList<User> friends = userManager.getFriends();
 
-        for(int i = 0; i < resp.size(); i++){
+        for(User friend : friends){
             View friendView = inflater.inflate(R.layout.friends_view, listView, false);
             TextView textName = friendView.findViewById(R.id.name);
             TextView textTag = friendView.findViewById(R.id.tag);

@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
-import com.github.jovenpableo.friendtag.firebase.Users;
+import com.github.jovenpableo.friendtag.firebase.UserManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
+                UserManager userManager = UserManager.getInstance();
+                userManager.write(new User());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
@@ -136,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            Users users = new Users();
-            users.write(new User());
-
             Intent loggedInIntent = new Intent(this, MapActivity.class);
             startActivity(loggedInIntent);
             finish();
