@@ -5,20 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
-import com.github.jovenpableo.friendtag.firebase.Users;
+import com.github.jovenpableo.friendtag.firebase.UserManager;
+import com.github.jovenpableo.friendtag.utility.CircleTransform;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class FriendsActivity extends AppCompatActivity {
-
-    Users db;
+    UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,39 +31,25 @@ public class FriendsActivity extends AppCompatActivity {
 
         LayoutInflater inflater = getLayoutInflater();
 
-        db = new Users();
+        userManager = UserManager.getInstance();
 
-        ArrayList<User> resp = db.getFriends();
+        ArrayList<User> friends = userManager.getFriends();
 
-        for(int i = 0; i < resp.size(); i++){
+        for(User friend : friends){
             View friendView = inflater.inflate(R.layout.friends_view, listView, false);
             TextView textName = friendView.findViewById(R.id.name);
             TextView textTag = friendView.findViewById(R.id.tag);
             TextView textTagBack = friendView.findViewById(R.id.tag_back);
+            ImageView picture = friendView.findViewById(R.id.picture);
 
-            Map<String, Object> userData = resp.get(i).toMap();
 
-            Object test = userData.get("displayName");
-            textName.setText(test.toString());
+            // TODO CALCULATE NEARBY BOOLEAN BY DISTANCE OF X PRECISION
+
+            textName.setText(friend.getDisplayName());
+            textTag.setText(friend.getTagPoints());
+            Picasso.get().load(friend.getPictureUrl()).transform(new CircleTransform()).into(picture);
 
             listView.addView(friendView);
         }
-
-
-
-
-//        listView.addView(friendView);
-//
-//        View friendView2 = inflater.inflate(R.layout.friends_view, listView, false);
-//        TextView textView = (TextView) friendView2.findViewById(R.id.name);
-//        textView.setText("Joe");
-//        textView = friendView2.findViewById(R.id.tag);
-//        textView.setText("9000");
-//        textView = friendView2.findViewById(R.id.tag_back);
-//        textView.setText("0");
-//        textView = friendView2.findViewById(R.id.nearby);
-//        textView.setText("");
-//
-//        listView.addView(friendView2);
     }
 }
