@@ -13,8 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -202,12 +200,8 @@ public class User {
     public int getTagPoints() {
         return this.tagPoints;
     }
+
     public ArrayList<String> getFriends() { return this.friends; }
-    public String getTags() { return this.tags; }
-    public String getTagged() { return this.tagged; }
-
-
-
 
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)

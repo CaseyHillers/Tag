@@ -5,12 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
+import com.github.jovenpableo.friendtag.utility.CircleTransform;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.util.ArrayList;
 
 public class FriendsActivity extends AppCompatActivity {
     UserManager userManager;
@@ -38,10 +45,9 @@ public class FriendsActivity extends AppCompatActivity {
 
             // TODO CALCULATE NEARBY BOOLEAN BY DISTANCE OF X PRECISION
 
-            textName.setText(resp.get(i).getDisplayName());
-            textTag.setText(resp.get(i).getTags());
-            textTagBack.setText(resp.get(i).getTagged());
-            Picasso.get().load(resp.get(i).getPictureUrl()).transform(new CircleTransform()).into(picture);
+            textName.setText(friend.getDisplayName());
+            textTag.setText(friend.getTagPoints());
+            Picasso.get().load(friend.getPictureUrl()).transform(new CircleTransform()).into(picture);
 
             listView.addView(friendView);
         }
