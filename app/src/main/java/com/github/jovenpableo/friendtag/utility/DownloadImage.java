@@ -48,6 +48,10 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
 
+        if (bitmap == null) {
+            return;
+        }
+
         int squareBitmapWidth = Math.min(bitmap.getWidth(), bitmap.getHeight());
 
         Bitmap dstBitmap = Bitmap.createBitmap(

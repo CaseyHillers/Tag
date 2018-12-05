@@ -51,21 +51,7 @@ public class UserManager {
     public ArrayList<User> getFriends() {
         friends = new ArrayList<>();
 
-        db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        User u = new User(document.getData());
-                        for(int i = 0; i < user.getFriends().size(); i++){
-                            if(u.getUid().equals(user.getFriends().get(i))){
-                                friends.add(u);
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        // TODO: Implement looping through array of UID's
 
         return friends;
     }
@@ -175,13 +161,10 @@ public class UserManager {
             }
         }
 
-        // TODO: Check if tag distance is valid
-
+        // TODO: Check location
 
         getCurrentUser().tag(user);
         getCurrentUser().write(db);
-
-        Log.i(TAG, "TAGGED");
 
         return true;
     }
@@ -193,7 +176,7 @@ public class UserManager {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "UserManager: DocumentSnapshot successfully written!");
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

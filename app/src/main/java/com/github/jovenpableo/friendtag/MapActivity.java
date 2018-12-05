@@ -2,10 +2,14 @@ package com.github.jovenpableo.friendtag;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
@@ -37,7 +41,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     DownloadImage di;
 
     private ArrayList<User> users;
-    private UserManager userManager;
+    private static UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                                           @Override
                                           public boolean onMarkerClick(Marker marker) {
                                               Intent intent = new Intent(ctx, ProfileActivity.class);
+                                              intent.putExtra("uid", marker.getTag().toString());
                                               startActivity(intent);
                                               return true;
                                           }
@@ -116,13 +121,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public static void renderAfter(Bitmap bitmap, String currUID){
-        for (User user : users) {
+        ArrayList<User> allUsers = userManager.getAllUsers();
+        for (User user : allUsers) {
             if(user.getUid().equals(currUID)){
                 Location location = user.getLocation();
 
                 Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
                 LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
-                mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()).icon(BitmapDescriptorFactory.fromBitmap(bitmap))).setTag(user.getUid());
             }
         }
 
