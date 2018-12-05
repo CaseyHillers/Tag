@@ -36,6 +36,7 @@ public class UserManager {
     private FirebaseUser currentFirebaseUser;
 
     public Map<String, User> users;
+    public ArrayList<User> friends;
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -45,6 +46,28 @@ public class UserManager {
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         this.loadUsers();
+    }
+
+    public ArrayList<User> getFriends() {
+        friends = new ArrayList<>();
+
+        db.collection(TABLE_NAME).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        User u = new User(document.getData());
+                        for(int i = 0; i < user.getFriends().size(); i++){
+                            if(u.getUid().equals(user.getFriends().get(i))){
+                                friends.add(u);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        return friends;
     }
 
     public static UserManager getInstance() {
@@ -74,7 +97,6 @@ public class UserManager {
         Log.i(TAG, "Got location i think");
 
         return getCurrentUser().getLocation();
-
     }
 
     public User getUser(String uid) {

@@ -6,25 +6,35 @@ import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
+import com.github.jovenpableo.friendtag.utility.DownloadImage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
     Context ctx;
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
+
+    ConnectivityManager connectivityManager;
+    NetworkInfo networkInfo;
+    DownloadImage di;
 
     private ArrayList<User> users;
     private UserManager userManager;
@@ -33,6 +43,10 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        networkInfo = connectivityManager.getActiveNetworkInfo();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -65,9 +79,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                           @Override
                                           public boolean onMarkerClick(Marker marker) {
-                                              String uid = (String) marker.getTag();
                                               Intent intent = new Intent(ctx, ProfileActivity.class);
-                                              intent.putExtra("uid", uid);
                                               startActivity(intent);
                                               return true;
                                           }
@@ -89,19 +101,36 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 16.0F));
+
     }
 
     public void renderUsers() {
         users = userManager.getAllUsers();
         Log.i("ucsc-tag", "Adding users to the map (size: " + users.size() + ")");
-        int i = 0;
+
         for (User user : users) {
-            Location location = user.getLocation();
-            Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
-            LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
-            //i is used as dummy text
-            mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName())).setTag(user.getUid());
-            i++;
+            di = new DownloadImage();
+            di.uuid = user.getUid();
+            di.execute(user.getPictureUrl());
         }
+    }
+
+    public static void renderAfter(Bitmap bitmap, String currUID){
+        for (User user : users) {
+            if(user.getUid().equals(currUID)){
+                Location location = user.getLocation();
+
+                Log.i("ucsc-tag", "Putting " + user.getDisplayName() + " at " + location.getLatitude() + ", " + location.getLongitude());
+                LatLng loc = new LatLng(user.getLocation().getLatitude(), user.getLocation().getLongitude());
+                mMap.addMarker(new MarkerOptions().position(loc).title(user.getDisplayName()).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+            }
+        }
+
+    }
+
+
+    public void changeToFriends(View view) {
+        Intent intent = new Intent(this, FriendsActivity.class);
+        startActivity(intent);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.jovenpableo.friendtag;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,38 +13,37 @@ import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 
 public class FriendsActivity extends AppCompatActivity {
-
     UserManager userManager;
-
-    private LinearLayout listView;
-    private LayoutInflater inflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
-        listView = findViewById(R.id.list_view);
-        inflater = getLayoutInflater();
+        LinearLayout listView = (LinearLayout) findViewById(R.id.list_view);
+
+        LayoutInflater inflater = getLayoutInflater();
 
         userManager = UserManager.getInstance();
 
-//        TODO: Make this use the callback functional way
-//        ArrayList<User> friends = userManager.getAll();
-//
-//        for (User friend : friends) {
-//            addMessageBox(friend);
-//        }
-    }
+        ArrayList<User> friends = userManager.getFriends();
 
-    private void addMessageBox(User user) {
+        for(User friend : friends){
             View friendView = inflater.inflate(R.layout.friends_view, listView, false);
             TextView textName = friendView.findViewById(R.id.name);
             TextView textTag = friendView.findViewById(R.id.tag);
             TextView textTagBack = friendView.findViewById(R.id.tag_back);
+            ImageView picture = friendView.findViewById(R.id.picture);
 
-            textName.setText(user.getDisplayName());
+
+            // TODO CALCULATE NEARBY BOOLEAN BY DISTANCE OF X PRECISION
+
+            textName.setText(resp.get(i).getDisplayName());
+            textTag.setText(resp.get(i).getTags());
+            textTagBack.setText(resp.get(i).getTagged());
+            Picasso.get().load(resp.get(i).getPictureUrl()).transform(new CircleTransform()).into(picture);
 
             listView.addView(friendView);
+        }
     }
 }

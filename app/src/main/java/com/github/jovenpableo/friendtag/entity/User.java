@@ -11,6 +11,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +33,7 @@ public class User {
     private String pictureUrl;
     private Bitmap picture;
     private String bio;
+    private ArrayList<String> friends;
 
     private Map<String, Date> tags;
     private int tagPoints;
@@ -70,6 +76,24 @@ public class User {
             }
         } else {
             Log.w(TAG, "Failed to find key:" + key);
+        }
+
+        return null;
+    }
+
+    private ArrayList<String> getList(Map<String, Object> data, String key) {
+        if (data.containsKey(key)) {
+            try {
+                ArrayList<String> list = new ArrayList<String>();
+                JSONArray jsonArray = new JSONArray(data.get(key).toString());
+
+
+                for(int i = 0; i < jsonArray.length(); i++){
+                    list.add(jsonArray.getString(i));
+                }
+
+                return list;
+            } catch (Exception e) {}
         }
 
         return null;
@@ -178,6 +202,12 @@ public class User {
     public int getTagPoints() {
         return this.tagPoints;
     }
+    public ArrayList<String> getFriends() { return this.friends; }
+    public String getTags() { return this.tags; }
+    public String getTagged() { return this.tagged; }
+
+
+
 
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)
@@ -186,7 +216,7 @@ public class User {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written for uid: " + uid);
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
