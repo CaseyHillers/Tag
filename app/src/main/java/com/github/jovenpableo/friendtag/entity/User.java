@@ -249,9 +249,18 @@ public class User {
         map.put("uuid", uid);
         map.put("displayName", displayName);
         map.put("pictureUrl", pictureUrl);
-        map.put("tagPoints", tagPoints);
-        map.put("tags", tags);
-        map.put("bio", bio);
+
+        if (tagPoints != 0) {
+            map.put("tagPoints", tagPoints);
+        }
+
+        if (tags != null) {
+            map.put("tags", tags);
+        }
+
+        if (bio != null) {
+            map.put("bio", bio);
+        }
 
         if (location != null) {
             map.put("lon", location.getLongitude());

@@ -21,10 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:cropToPadding="false"
-        android:paddingLeft="10dp"
-        android:paddingTop="450dp"
-        android:src="@mipmap/feedback"
-        android:onClick="changeToFriends"/>
+        android:onClick="changeToFriends"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:src="@mipmap/feedback" />
 
 </FrameLayout>
 

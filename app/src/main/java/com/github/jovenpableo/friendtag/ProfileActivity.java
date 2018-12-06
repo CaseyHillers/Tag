@@ -19,7 +19,9 @@ import android.widget.Toast;
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
+import com.github.jovenpableo.friendtag.utility.CircleTransform;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -124,7 +126,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setTagButton(user);
 
         String name = user.getDisplayName();
-        Bitmap avatar = user.getPicture();
+        Picasso.get().load(user.getPictureUrl()).transform(new CircleTransform()).into(avatarView);
+
         String tags = "" + user.getTagPoints();
         String bio = user.getBio();
         if (bio == null || bio.equals("")) {
@@ -174,6 +177,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         userManager.tag(user);
         setTagButton(user);
         Toast.makeText(this, "You tagged " + user.getDisplayName(), Toast.LENGTH_LONG).show();
+
+        Button actionButton = findViewById(R.id.btnAction);
+        actionButton.setText("Tag is on cool down");
+        actionButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
+        actionButton.setOnClickListener(null);
     }
 
     public void faButtonClick(View view) {

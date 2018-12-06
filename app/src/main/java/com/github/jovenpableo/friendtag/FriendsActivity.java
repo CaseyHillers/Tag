@@ -76,7 +76,8 @@ public class FriendsActivity extends AppCompatActivity {
 
         double distanceMeters = here.distanceTo(there);
         double distanceMiles = distanceMeters / 1609.344; // NOTE: Courtesy of Google
-        distanceMiles = Math.round(distanceMiles * 100) / 100;
+        Log.i(TAG, user.getDisplayName() + " is " + distanceMiles + " miles away");
+        distanceMiles = Math.round(distanceMiles * 10) / 10;
 
         return distanceMiles;
     }
