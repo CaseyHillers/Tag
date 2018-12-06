@@ -153,7 +153,7 @@ public class UserManager {
         }
 
         // NOTE: Check if tag time is valid
-        Date lastTagTime = user.getTagTime(user);
+        Date lastTagTime = getCurrentUser().getTagTime(user);
         if (lastTagTime != null) {
             Date currentTime = Calendar.getInstance().getTime();
 
@@ -164,7 +164,7 @@ public class UserManager {
             if (diffMinutes < 15) {
                 Log.i(TAG, "Tag is on cooldown for this user");
 
-                return false;
+//                return false;
             }
         }
 
@@ -174,15 +174,13 @@ public class UserManager {
             return false;
         }
 
-        // TODO: Check location
-
         getCurrentUser().tag(user);
         getCurrentUser().write(db);
 
         return true;
     }
 
-    private double getDistance(User user) {
+    public double getDistance(User user) {
         Location here = getCurrentUser().getLocation();
         Location there = user.getLocation();
 

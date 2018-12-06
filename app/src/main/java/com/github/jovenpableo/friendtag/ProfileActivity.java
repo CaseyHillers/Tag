@@ -2,6 +2,7 @@ package com.github.jovenpableo.friendtag;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
@@ -19,6 +20,9 @@ import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "ucsc-tag";
@@ -119,6 +123,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         updateFab();
+        setTagButton(user);
 
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
@@ -139,9 +144,37 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Log.i(TAG, "New name: " + nameView.getText());
     }
 
+    public void setTagButton(User user) {
+        double distance = userManager.getDistance(user);
+        Button actionButton = findViewById(R.id.btnAction);
+
+        if (distance > 1.0) {
+            actionButton.setText("Too far away");
+            actionButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
+            actionButton.setOnClickListener(null);
+        }
+
+        User current = userManager.getCurrentUser();
+        // NOTE: Check if tag time is valid
+        Date lastTagTime = current.getTagTime(user);
+        if (lastTagTime != null) {
+            Date currentTime = Calendar.getInstance().getTime();
+
+            long difference = currentTime.getTime() - lastTagTime.getTime();
+            long diffMinutes = difference / (60 * 1000);
+
+            if (diffMinutes < 15) {
+//                actionButton.setText("Tag is on cool down");
+//                actionButton.setBackgroundColor(Color.parseColor("#CCCCCC"));
+//                actionButton.setOnClickListener(null);
+            }
+        }
+    }
+
     public void onTagClick(View v) {
         Log.i(TAG, "Tag button clicked");
         userManager.tag(user);
+        setTagButton(user);
     }
 
     public void faButtonClick(View view) {

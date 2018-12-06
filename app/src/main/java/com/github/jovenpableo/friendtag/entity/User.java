@@ -113,7 +113,7 @@ public class User {
     }
 
     private Map<String, Date> getTags(Map<String, Object> data) {
-        Map<String, Date> tags = new HashMap<String, Date>();
+        Map<String, Date> tags = new HashMap<>();
 
         if (data == null) {
             return tags;
@@ -134,7 +134,7 @@ public class User {
             Log.i(TAG, entry.getKey() + ":" + entry.getValue());
             Date date;
             try {
-                date = new SimpleDateFormat("MMM dd yyyy HH:mm:ss").parse(dateString);
+                date = new SimpleDateFormat().parse(dateString);
             } catch (Exception e) {
                 date = new Date();
             }
