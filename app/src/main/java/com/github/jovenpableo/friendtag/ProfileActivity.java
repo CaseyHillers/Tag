@@ -173,6 +173,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Log.i(TAG, "Tag button clicked");
         userManager.tag(user);
         setTagButton(user);
+        Toast.makeText(this, "You tagged " + user.getDisplayName(), Toast.LENGTH_LONG).show();
     }
 
     public void faButtonClick(View view) {
