@@ -62,6 +62,8 @@ public class User {
         tagPoints = getInt(data, "tagPoints");
         Map<String, Object> dataTags = (Map<String, Object>) data.get("tags");
         tags = getTags(dataTags);
+
+        friends = getList(data, "friends");
     }
 
     private String getString(Map<String, Object> data, String key) {
@@ -198,10 +200,30 @@ public class User {
     }
 
     public int getTagPoints() {
-        return this.tagPoints;
+        if (tagPoints > 0) {
+            return tagPoints;
+        }
+
+        return 0;
     }
 
     public ArrayList<String> getFriends() { return this.friends; }
+
+    public void addFriend(User user) {
+        if (friends == null) {
+            friends = new ArrayList<>();
+        }
+
+        friends.add(user.getUid());
+    }
+
+    public boolean hasFriend(User friend) {
+        if (friends == null) {
+            return false;
+        }
+
+        return friends.contains(friend.getUid());
+    }
 
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)
@@ -229,10 +251,15 @@ public class User {
         map.put("pictureUrl", pictureUrl);
         map.put("tagPoints", tagPoints);
         map.put("tags", tags);
+        map.put("bio", bio);
 
         if (location != null) {
             map.put("lon", location.getLongitude());
             map.put("lat", location.getLatitude());
+        }
+
+        if (friends != null) {
+            map.put("friends", friends);
         }
 
         return map;

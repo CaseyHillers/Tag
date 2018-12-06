@@ -51,7 +51,11 @@ public class UserManager {
     public ArrayList<User> getFriends() {
         friends = new ArrayList<>();
 
-        // TODO: Implement looping through array of UID's
+        ArrayList<String> friendUids = getCurrentUser().getFriends();
+        for (String friendUid : friendUids) {
+            User friend = users.get(friendUid);
+            friends.add(friend);
+        }
 
         return friends;
     }
@@ -167,6 +171,12 @@ public class UserManager {
         getCurrentUser().write(db);
 
         return true;
+    }
+
+    public void addFriend(User user) {
+        User current = getCurrentUser();
+        current.addFriend(user);
+        current.write(db);
     }
 
     public void write(User user) {
