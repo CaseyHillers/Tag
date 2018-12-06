@@ -21,6 +21,15 @@ import com.github.jovenpableo.friendtag.firebase.UserManager;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "ucsc-tag";
 
+    enum State {
+        EDITABLE,
+        EDITING,
+        MESSAGE,
+        BEFRIEND
+    }
+
+    State state;
+
     ImageView avatarView;
     TextView nameView;
     TextView bioView;
@@ -41,6 +50,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
+
         avatarView = findViewById(R.id.imageAvatar);
         nameView = findViewById(R.id.textName1);
         bioView = findViewById(R.id.textBio);
@@ -54,8 +64,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (intent.hasExtra("uid") && !intent.getStringExtra("uid").equals("")) {
             Log.i(TAG, "Setting profile to " + intent.getStringExtra("uid"));
             user = userManager.getUser(intent.getStringExtra("uid"));
+            state = State.BEFRIEND;
         } else {
             user = userManager.getCurrentUser();
+            state = State.EDITABLE;
         }
 
         // NOTE: This is just here to update the location of a user
@@ -67,6 +79,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onStart();
 
         setProfile(user);
+    }
+
+    private void updateFab() {
+        FloatingActionButton floatingActionButton = findViewById((R.id.floatingActionButton));
+        switch (state) {
+            case EDITABLE:
+                floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
+                break;
+            case EDITING:
+                floatingActionButton.setImageResource(R.drawable.ic_check_white_24dp);
+                break;
+            case BEFRIEND:
+                floatingActionButton.setImageResource(R.drawable.ic_person_add_black_24dp);
+                break;
+            case MESSAGE:
+                floatingActionButton.setImageResource(R.drawable.ic_message_white_24dp);
+                break;
+            default:
+                Log.e(TAG, "Couldn't update FAB");
+                break;
+        }
     }
 
     private void setProfile(User user) {
