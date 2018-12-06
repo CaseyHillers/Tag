@@ -46,8 +46,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     UserManager userManager;
     User user;
-    boolean isCurrentUser = false;
-    boolean isEditing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +53,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_profile);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.hide();
+        if (actionBar != null) actionBar.hide();
 
         avatarView = findViewById(R.id.imageAvatar);
         nameView = findViewById(R.id.textName1);
@@ -196,11 +194,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case BEFRIEND:
                 // TODO: Write code and algorithms
                 userManager.addFriend(user);
-                Toast.makeText(this, "Added " + user.getDisplayName() + " to your friends list", Toast.LENGTH_LONG);
+                Toast.makeText(this, "Added " + user.getDisplayName() + " to your friends list", Toast.LENGTH_LONG).show();
                 state = State.MESSAGE;
                 break;
             case MESSAGE:
-                Toast.makeText(this, "Opening messages", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Opening messages", Toast.LENGTH_SHORT).show();
                 // TODO: Make intent that will go to the message activity
                 break;
             default:
