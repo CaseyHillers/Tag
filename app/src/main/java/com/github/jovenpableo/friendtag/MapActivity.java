@@ -1,13 +1,23 @@
 package com.github.jovenpableo.friendtag;
 
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.Toast;
+
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
@@ -23,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
+
+
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
     Context ctx;
     private GoogleMap mMap;
@@ -30,8 +42,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private ArrayList<User> users;
     private UserManager userManager;
 
+    
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -47,6 +65,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+        initAnimation();
+
+        getWindow().setAllowEnterTransitionOverlap(false);
+        
     }
 
 
@@ -105,6 +129,17 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
             i++;
         }
     }
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void initAnimation() {
+            Transition enterTansition = TransitionInflater.from(this).inflateTransition(R.transition.explode);
+            getWindow().setEnterTransition(enterTansition);
+
+    }
+
+
 
 }
 

@@ -33,7 +33,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.google.firebase.auth.GoogleAuthProvider;
 
+
 import android.app.ActivityOptions;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.transition.Slide;
+import android.view.Gravity;
+import android.view.View;
 
 
 
@@ -45,10 +52,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setupWindowAnimations();
+
 
         ActivityCompat.requestPermissions(this,new String[]
                 {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -68,7 +79,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void setupWindowAnimations() {
+        // Re-enter transition is executed when returning back to this activity
+        Slide slideTransition = new Slide();
+        slideTransition.setSlideEdge(Gravity.LEFT); // Use START if using right - to - left locale
+        slideTransition.setDuration(1000);
+        getWindow().setReenterTransition(slideTransition);  // When MainActivity Re-enter the Screen
+        getWindow().setExitTransition(slideTransition);     // When MainActivity Exits the Screen
+        getWindow().setAllowReturnTransitionOverlap(false);
+    }
+
+
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -88,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onStart() {
         super.onStart();
@@ -126,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -142,13 +170,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             UserManager userManager = UserManager.getInstance();
             userManager.write(new User());
 
-            Intent loggedInIntent = new Intent(this, MapActivity.class);
-            startActivity(loggedInIntent);
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);
+            Intent i = new Intent(MainActivity.this, MapActivity.class);
+            i.putExtra(Constants.KEY_ANIM_TYPE, Constants.TransitionType.ExplodeXML);
+            i.putExtra(Constants.KEY_TITLE, "Explode By Xml");
+            startActivity(i, options.toBundle());
+
             finish();
         }
     }
@@ -170,19 +204,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-/*
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
 
-
-    public void sign_in_button(View view) {
-
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this);
-        Intent i = new Intent(MainActivity.this, TransitionActivity.class);
-        i.putExtra(Constants.KEY_ANIM_TYPE, Constants.TransitionType.ExplodeJavaXML);
-        i.putExtra(Constants.KEY_TITLE, "Explode By Xml");
-        startActivity(i, options.toBundle());
-
-    }
-    */
 }
