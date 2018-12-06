@@ -13,10 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jovenpableo.friendtag.R;
 import com.github.jovenpableo.friendtag.entity.User;
 import com.github.jovenpableo.friendtag.firebase.UserManager;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "ucsc-tag";
@@ -27,8 +29,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         MESSAGE,
         BEFRIEND
     }
-
     State state;
+
+    private FirebaseFirestore db;
 
     ImageView avatarView;
     TextView nameView;
@@ -50,7 +53,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-
         avatarView = findViewById(R.id.imageAvatar);
         nameView = findViewById(R.id.textName1);
         bioView = findViewById(R.id.textBio);
@@ -59,12 +61,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         bioEdit = findViewById(R.id.editBio);
 
         userManager = UserManager.getInstance();
+        state = State.BEFRIEND;
 
         Intent intent = getIntent();
         if (intent.hasExtra("uid") && !intent.getStringExtra("uid").equals("")) {
             Log.i(TAG, "Setting profile to " + intent.getStringExtra("uid"));
             user = userManager.getUser(intent.getStringExtra("uid"));
-            state = State.BEFRIEND;
         } else {
             user = userManager.getCurrentUser();
             state = State.EDITABLE;
@@ -72,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         // NOTE: This is just here to update the location of a user
         Location location = userManager.getLocation(this);
+        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -105,12 +108,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void setProfile(User user) {
         User currentUser = userManager.getCurrentUser();
         if (currentUser.equals(user)) {
-            isCurrentUser = true;
+            state = State.EDITABLE;
+
+            // NOTE: Hide the tag button since we're on our own page
             Button actionButton = findViewById(R.id.btnAction);
-            FloatingActionButton floatingActionButton = findViewById((R.id.floatingActionButton));
             actionButton.setVisibility(View.GONE);
-            floatingActionButton.setImageResource(R.drawable.ic_edit_white_24dp);
+        } else if (currentUser.hasFriend(user)){
+            // NOTE: Not current user check if friend
+            state = State.MESSAGE;
         }
+
+        updateFab();
 
         String name = user.getDisplayName();
         Bitmap avatar = user.getPicture();
@@ -137,22 +145,37 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void faButtonClick(View view) {
-        if (isCurrentUser && !isEditing) {
-            faButton.setImageResource(R.drawable.ic_check_white_24dp);
-            isEditing = true;
-            //switch to EditView with content of bioView
-            bioView.setVisibility(View.GONE);
-            bioEdit.setVisibility(View.VISIBLE);
-        } else if (isCurrentUser) { //isEditing is true
-            faButton.setImageResource(R.drawable.ic_edit_white_24dp);
-            isEditing = false;
-            bioView.setText(bioEdit.getText());
-            bioEdit.setVisibility(View.GONE);
-            bioView.setVisibility(View.VISIBLE);
-            //TODO: store in database
-        } else {
-            //TODO: start message activity here
+        switch (state) {
+            case EDITABLE:
+                state = State.EDITING;
+                //switch to EditView with content of bioView
+                bioView.setVisibility(View.GONE);
+                bioEdit.setVisibility(View.VISIBLE);
+                break;
+            case EDITING:
+                state = State.EDITABLE;
+                user.setBio(bioEdit.getText().toString());
+                user.write(db);
+                bioView.setText(bioEdit.getText());
+                bioEdit.setVisibility(View.GONE);
+                bioView.setVisibility(View.VISIBLE);
+                break;
+            case BEFRIEND:
+                // TODO: Write code and algorithms
+                userManager.addFriend(user);
+                Toast.makeText(this, "Added " + user.getDisplayName() + " to your friends list", Toast.LENGTH_LONG);
+                state = State.MESSAGE;
+                break;
+            case MESSAGE:
+                Toast.makeText(this, "Opening messages", Toast.LENGTH_SHORT);
+                // TODO: Make intent that will go to the message activity
+                break;
+            default:
+                Log.e(TAG, "Failed to find current profile state");
+                break;
         }
+
+        updateFab();
     }
 
     @Override
