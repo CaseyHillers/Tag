@@ -62,6 +62,8 @@ public class User {
         tagPoints = getInt(data, "tagPoints");
         Map<String, Object> dataTags = (Map<String, Object>) data.get("tags");
         tags = getTags(dataTags);
+
+        friends = getList(data, "friends");
     }
 
     private String getString(Map<String, Object> data, String key) {
@@ -111,7 +113,7 @@ public class User {
     }
 
     private Map<String, Date> getTags(Map<String, Object> data) {
-        Map<String, Date> tags = new HashMap<String, Date>();
+        Map<String, Date> tags = new HashMap<>();
 
         if (data == null) {
             return tags;
@@ -132,7 +134,7 @@ public class User {
             Log.i(TAG, entry.getKey() + ":" + entry.getValue());
             Date date;
             try {
-                date = new SimpleDateFormat("MMM dd yyyy HH:mm:ss").parse(dateString);
+                date = new SimpleDateFormat().parse(dateString);
             } catch (Exception e) {
                 date = new Date();
             }
@@ -198,10 +200,30 @@ public class User {
     }
 
     public int getTagPoints() {
-        return this.tagPoints;
+        if (tagPoints > 0) {
+            return tagPoints;
+        }
+
+        return 0;
     }
 
     public ArrayList<String> getFriends() { return this.friends; }
+
+    public void addFriend(User user) {
+        if (friends == null) {
+            friends = new ArrayList<>();
+        }
+
+        friends.add(user.getUid());
+    }
+
+    public boolean hasFriend(User friend) {
+        if (friends == null) {
+            return false;
+        }
+
+        return friends.contains(friend.getUid());
+    }
 
     public void write(FirebaseFirestore db) {
         db.collection(TABLE_NAME)
@@ -227,12 +249,26 @@ public class User {
         map.put("uuid", uid);
         map.put("displayName", displayName);
         map.put("pictureUrl", pictureUrl);
-        map.put("tagPoints", tagPoints);
-        map.put("tags", tags);
+
+        if (tagPoints != 0) {
+            map.put("tagPoints", tagPoints);
+        }
+
+        if (tags != null) {
+            map.put("tags", tags);
+        }
+
+        if (bio != null) {
+            map.put("bio", bio);
+        }
 
         if (location != null) {
             map.put("lon", location.getLongitude());
             map.put("lat", location.getLatitude());
+        }
+
+        if (friends != null) {
+            map.put("friends", friends);
         }
 
         return map;

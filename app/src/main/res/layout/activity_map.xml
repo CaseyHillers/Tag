@@ -16,11 +16,15 @@
         tools:context="com.github.jovenpableo.friendtag.MapActivity"
         />
 
-    <Button
-        android:id="@+id/button"
+    <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="changeToFriends"/>
+        android:cropToPadding="false"
+        android:onClick="changeToFriends"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:src="@mipmap/feedback" />
 
 </FrameLayout>
 
