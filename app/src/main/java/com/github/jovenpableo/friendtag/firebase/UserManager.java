@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.jovenpableo.friendtag.entity.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -158,11 +159,19 @@ public class UserManager {
 
             long difference = currentTime.getTime() - lastTagTime.getTime();
             long diffMinutes = difference / (60 * 1000);
+            Log.i(TAG, "Difference in time is at " + diffMinutes);
 
             if (diffMinutes < 15) {
                 Log.i(TAG, "Tag is on cooldown for this user");
+
                 return false;
             }
+        }
+
+        if (getDistance(user) > 1.0) {
+            Log.i(TAG, "They're too far away");
+
+            return false;
         }
 
         // TODO: Check location
@@ -171,6 +180,17 @@ public class UserManager {
         getCurrentUser().write(db);
 
         return true;
+    }
+
+    private double getDistance(User user) {
+        Location here = getCurrentUser().getLocation();
+        Location there = user.getLocation();
+
+        double distanceMeters = here.distanceTo(there);
+        double distanceMiles = distanceMeters / 1609.344; // NOTE: Courtesy of Google
+        distanceMiles = Math.round(distanceMiles * 100) / 100;
+
+        return distanceMiles;
     }
 
     public void addFriend(User user) {
