@@ -61,9 +61,11 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         ctx = getApplicationContext();
         try {
             Thread.sleep(1000);
+//            Location location = userManager.getLocation(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
 

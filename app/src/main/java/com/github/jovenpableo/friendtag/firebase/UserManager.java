@@ -215,4 +215,23 @@ public class UserManager {
                 });
     }
 
+    public void create(User user) {
+        db.collection(TABLE_NAME)
+                .document(user.getUid())
+                .set(user.toMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+
 }

@@ -103,7 +103,7 @@ public class User {
         Log.v(TAG, "Getting integer for user");
         String integer = getString(data, key);
         Log.v(TAG, "Retrieved string: " + integer);
-        if (integer.equals(null)) {
+        if (integer == null) {
             Log.w(TAG, "Retrieved integer is null");
             return 0;
         }
@@ -229,6 +229,24 @@ public class User {
         db.collection(TABLE_NAME)
                 .document(getUid())
                 .set(toMap())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+    public void update(FirebaseFirestore db) {
+        db.collection(TABLE_NAME)
+                .document(getUid())
+                .update(toMap())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
