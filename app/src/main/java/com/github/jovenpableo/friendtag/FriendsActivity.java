@@ -19,6 +19,9 @@ import com.github.jovenpableo.friendtag.utility.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class FriendsActivity extends AppCompatActivity {
     private final String TAG = "ucsc-tag";
@@ -41,6 +44,13 @@ public class FriendsActivity extends AppCompatActivity {
 
         currentUser = userManager.getCurrentUser();
         ArrayList<User> friends = userManager.getFriends();
+        Collections.sort(friends, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                return ((Integer) o2.getTagPoints()).compareTo((Integer) o1.getTagPoints());
+            }
+        });
+
         Log.i(TAG, "Friend count: " + friends.size());
 
         for(User friend : friends){
